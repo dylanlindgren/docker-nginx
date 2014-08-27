@@ -19,14 +19,12 @@ RUN yum update -y
 RUN yum install nginx -y
 
 # install php-fpm
-RUN yum --enablerepo=remi install php-fpm -y
-
-# install mysql-client
-
+RUN yum --enablerepo=remi install php-cli php-fpm php-mysqlnd php-mssql php-pgsql php-gd php-mcrypt php-ldap php-imap -y
 
 # configure PHP to the system timezone
 RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php.ini
 #RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/cli/php.ini
+
 
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php-fpm.conf
