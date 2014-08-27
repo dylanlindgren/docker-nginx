@@ -2,22 +2,29 @@ FROM centos:latest
 
 MAINTAINER "Dylan Lindgren" <dylan.lindgren@gmail.com>
 
+# set home environment variable, as docker does not look this up in /etc/passwd
 ENV HOME /root
 
-# install HDY certificates
-ADD build/certs/HDY /tmp/HDY
-RUN cat /tmp/HDY >> /etc/pki/tls/certs/ca-bundle.crt
+# install certificates
+ADD build/certs /tmp/certs
+RUN cat /tmp/certs >> /etc/pki/tls/certs/ca-bundle.crt
 
+# install required repos and update
 ADD build/nginx.repo /etc/yum.repos.d/nginx.repo
-
 RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-0.2.noarch.rpm
 RUN rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-
 RUN yum update -y
+
+# install nginx
 RUN yum install nginx -y
 
+# install php-fpm
 RUN yum --enablerepo=remi install php-fpm -y
 
+# install mysql-client
+
+
+# configure PHP to the system timezone
 RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php.ini
 #RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php5/cli/php.ini
 
