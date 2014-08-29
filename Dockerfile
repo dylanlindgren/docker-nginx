@@ -24,23 +24,22 @@ RUN yum --enablerepo=remi install -y php-cli php-fpm php-mysqlnd php-mssql php-p
 # Configure PHP to UTC timezone
 RUN sed -i "s/;date.timezone =.*/date.timezone = UTC/" /etc/php.ini
 
-# Stop Nginx & PHP-FPM from becoming a daemon
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+# Stop PHP-FPM from becoming a daemon
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php-fpm.conf
 RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php.ini
+
+ADD build/nginx.conf /etc/nginx/nginx.conf
 
 RUN mkdir /data
 RUN mkdir /data/www
 RUN mkdir /data/nginx
-RUN mkdir /data/nginx/sites-available
-RUN mkdir /data/nginx/sites-enabled
+RUN mkdir /data/nginx/sites
 RUN mkdir /data/nginx/logs
-
-ADD build/sites-available/default /data/nginx/sites-available/default
 
 # Data volumes
 VOLUME ["/data/www"]
-VOLUME ["/data/nginx"]
+VOLUME ["/data/nginx/sites"]
+VOLUME ["/data/nginx/logs"]
 
 # Port 80 is where the Nginx server will listen on
 EXPOSE 80
