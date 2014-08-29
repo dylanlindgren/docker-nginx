@@ -11,7 +11,7 @@ RUN cat /tmp/certs >> /etc/pki/tls/certs/ca-bundle.crt
 
 # Install required repos and update
 ADD build/nginx.repo /etc/yum.repos.d/nginx.repo
-RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-0.2.noarch.rpm
+RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/epel-release-7-0.2.noarch.rpm
 RUN rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 RUN yum update -y
 
@@ -29,13 +29,14 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php-fpm.conf
 RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php.ini
 
-ADD build/sites-available/default /data/nginx/sites-available/default
-
+RUN mkdir /data
 RUN mkdir /data/www
 RUN mkdir /data/nginx
 RUN mkdir /data/nginx/sites-available
 RUN mkdir /data/nginx/sites-enabled
 RUN mkdir /data/nginx/logs
+
+ADD build/sites-available/default /data/nginx/sites-available/default
 
 # Data volumes
 VOLUME ["/data/www"]
