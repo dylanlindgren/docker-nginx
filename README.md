@@ -50,7 +50,7 @@ The below directory structure must be manually created on the host before runnin
 ```
 [PHP-FPM](https://github.com/dylanlindgren/docker-phpfpm) also requires access to the `/data/www` directory, and so instead of mounting that volume in this container, we will use the `--volumes-from` switch as due to the `--link` command the PHP-FPM container needs to be run first.
 
-The `/data/nginx/sites/available` and `/data/nginx/sites/enabled` directories both operate in the same fashion as the regular `sites-available` and `sites-enabled` directories in Nginx - that is, put your website config files all in the `available` directory and create symlinks to these files in the `enabled` directory with the below command (after `cd`ing into the `enabled` directory).
+The `available` and `enabled` directories under `/data/nginx/sites` both operate in the same fashion as the regular `sites-available` and `sites-enabled` directories in Nginx - that is, put your website config files all in the `available` directory and create symlinks to these files in the `enabled` directory with the below command (after `cd`ing into the `enabled` directory).
 ```bash
 ln -s ../available/website1 website1
 ```
