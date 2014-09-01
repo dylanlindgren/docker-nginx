@@ -30,23 +30,23 @@ The below directory structure must be manually created on the host before runnin
 /data
 |
 └────www
-     ├─── website1_files
-          | ...
-     ├─── website2_files
-          | ...
+|    ├─── website1_files
+|    |    └ ...
+|    └─── website2_files
+|         └ ...
 |
 └────nginx
      ├─── logs
-          | ...
+     |    └ ...
      |
-     ├─── sites
+     └─── sites
           ├─── available
-               |  website1
-               |  website2
-               | ...
-          ├─── enabled
+          |    |  website1
+          |    |  website2
+          |    └ ...
+          └─── enabled
                |  website1_symlink
-               | ...
+               └ ...
 ```
 [PHP-FPM](https://github.com/dylanlindgren/docker-phpfpm) also requires access to the `/data/www` directory, and so instead of mounting that volume in this container, we will use the `--volumes-from` switch as due to the `--link` command the PHP-FPM container needs to be run first.
 
