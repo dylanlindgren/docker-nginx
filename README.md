@@ -81,9 +81,9 @@ server {
 
 To create and run the container:
 ```bash
-docker run --privileged=true -p 80:80 --name web -v /data/nginx:/data/nginx:rw --volumes-from php --link php:fpm -d dylanlindgren/docker-nginx
+docker run --privileged=true -p 80:80 -p 443:443 --name web -v /data/nginx:/data/nginx:rw --volumes-from php --link php:fpm -d dylanlindgren/docker-nginx
 ```
- - `-p` maps the container's port 80 to port 80 on the host.
+ - the first `-p` maps the container's port 80 to port 80 on the host, the second maps the container's 443 to the hosts 443.
  - `--name` sets the name of the container (useful when starting/stopping).
  - `-v` maps the `/data/nginx` folder as read/write (rw).
  - `--volumes-from`  gets volumes from the `php` container (it should have `/data/www` mapped)
