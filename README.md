@@ -55,6 +55,27 @@ The `available` and `enabled` directories under `/data/nginx/sites` both operate
 ln -s ../available/website1 website1
 ```
 
+Each of the files under the `/data/nginx/sites/available` directory should contain a definition for a Nginx server.
+```
+server {
+    listen       80;
+    server_name  www.website1.com;
+
+    location ~* \.(html|jpg|jpeg|gif|png|css|js|ico|xml)$ {
+        root              /data/www/website1_files/public;
+        access_log        off;
+        log_not_found     off;
+        expires           360d;
+    }
+
+    location ~* \.php$ {
+        root /data/www;
+        include fastcgi.conf;
+        fastcgi_pass nginx_backend;
+    }
+}
+```
+
 ## Creating and running the container
 **NOTE:** a container based on [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm) must be created before running the below steps.
 
