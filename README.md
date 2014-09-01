@@ -24,6 +24,8 @@ docker build -t [IMAGENAME] .
 
 ## Nginx site config and www data
 Generally we want changes to our website data to be persistent, so that when the container is stopped or destroyed our website data and sites don't go with it. To accomplish this, we are going going to use the `-v` switch for `docker run` to mount volumes on the host inside the container. There will be two volumes, one at `/data/www` and another at `/data/nginx`.
+
+The below directory structure must be manually created on the host before running the container.
 ```
 /data
 |
