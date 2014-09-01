@@ -55,7 +55,7 @@ The `available` and `enabled` directories under `/data/nginx/sites` both operate
 ln -s ../available/website1 website1
 ```
 
-Each of the files under the `/data/nginx/sites/available` directory should contain a definition for a Nginx server.
+Each of the files under the `/data/nginx/sites/available` directory should contain a definition for a Nginx server. For example:
 ```
 server {
     listen       80;
