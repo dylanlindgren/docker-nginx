@@ -100,7 +100,7 @@ To start the container again:
 docker start couchpotato
 ```
 ### Running as a Systemd service
-To run this container as a service on a [Systemd](http://www.freedesktop.org/wiki/Software/systemd/) based distro (e.g. CentOS 7), create a unit file under `/etc/systemd/system` called `docker-nginx.service` with the below contents
+To run this container as a service on a [Systemd](http://www.freedesktop.org/wiki/Software/systemd/) based distro (e.g. CentOS 7), create a unit file under `/etc/systemd/system` called `nginx.service` with the below contents
 ```bash
 [Unit]
 Description=Nginx Docker container (dylanlindgren/docker-nginx)
@@ -124,7 +124,7 @@ Then you can start/stop/restart the container with the regular Systemd commands 
 
 To automatically start the container when you restart enable the unit file with the command `systemctl enable nginx.service`.
 
-Something to note is that this service is set to require `docker-phpfpm.service` which is a service which runs the php-fpm container made with  [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
+Something to note is that this service is set to require `php-fpm.service` which is a service which runs the php-fpm container made with  [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
 
 ## Acknowledgements
 The below two blog posts were very useful in the creation of both of these projects.
