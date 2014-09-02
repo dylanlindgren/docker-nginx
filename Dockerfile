@@ -40,6 +40,9 @@ EXPOSE 80
 # Port 443 for https
 EXPOSE 443
 
+# Allow Nginx to bind to a port below 1024
+RUN setcap cap_net_bind_service=ep /usr/sbin/nginx
+
 # This script gets the linked PHP-FPM container's IP and puts it into
 # the upstream definition in the /etc/nginx/nginx.conf file, after which
 # it launches Nginx.
