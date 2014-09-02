@@ -2,9 +2,6 @@ FROM centos:latest
 
 MAINTAINER "Dylan Lindgren" <dylan.lindgren@gmail.com>
 
-# Set home environment variable, as Docker does not look this up in /etc/passwd
-ENV HOME /root
-
 # Install trusted CA's (needed in the environment this was developed for)
 ADD build/certs /tmp/certs
 RUN cat /tmp/certs >> /etc/pki/tls/certs/ca-bundle.crt
@@ -48,6 +45,10 @@ EXPOSE 443
 # it launches Nginx.
 ADD build/nginx.sh /opt/bin/nginx.sh
 RUN chmod u=rwx /opt/bin/nginx.sh
+RUN chown nginx:nginx /opt/bin/nginx.sh /etc/nginx /etc/nginx/nginx.conf
+
+# Run all subsequent commands as the Nginx user
+USER nginx
 
 # Run the Nginx startup script on container start.
 ENTRYPOINT ["/opt/bin/nginx.sh"]
