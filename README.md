@@ -127,7 +127,7 @@ To automatically start the container when you restart enable the unit file with 
 Something to note is that this service is set to require `php-fpm.service` which is a service which runs the php-fpm container made with  [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
 
 ## Acknowledgements
-The below two blog posts were very useful in the creation of both of these projects.
+The below pages were very useful in the creation of both of these projects.
 
  - [enalean.com](http://www.enalean.com/en/Deploy-%20PHP-app-Docker-Nginx-FPM-CentOSSCL)
  - [stage1.io](http://stage1.io/blog/making-docker-containers-communicate/)
