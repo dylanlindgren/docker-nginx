@@ -103,17 +103,19 @@ docker start couchpotato
 To run this container as a service on a [Systemd](http://www.freedesktop.org/wiki/Software/systemd/) based distro (e.g. CentOS 7), create a unit file under `/etc/systemd/system` called `docker-nginx.service` with the below contents
 ```bash
 [Unit]
-Description=Nginx docker container
-After=php-fpm.service docker.service
-Requires=php-fpm.service docker.service
+Description=Nginx Docker container (dylanlindgren/docker-nginx)
+After=docker.service
+After=php-fpm.service
+Requires=docker.service
+Requires=php-fpm.service
 
 [Service]
-Type=oneshot
-RemainAfterExit=yes
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker stop web
-ExecStart=/usr/bin/docker start web
-ExecStop=/usr/bin/docker stop web
+ExecStartPre=-/usr/bin/docker stop nginx
+ExecStartPre=-/usr/bin/docker rm nginx
+ExecStartPre=-/usr/bin/docker pull dylanlindgren/docker-nginx
+ExecStart=/usr/bin/docker run --privileged=true -p 80:80 -p 443:443 --name nginx -v /data/nginx:/data/nginx:rw --volumes-from phpfpm --link phpfpm:fpm dylanlindgren/docker-nginx
+ExecStop=/usr/bin/docker stop nginx
 
 [Install]
 WantedBy=multi-user.target
