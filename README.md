@@ -131,3 +131,4 @@ The below two blog posts were very useful in the creation of both of these proje
 
  - [enalean.com](http://www.enalean.com/en/Deploy-%20PHP-app-Docker-Nginx-FPM-CentOSSCL)
  - [stage1.io](http://stage1.io/blog/making-docker-containers-communicate/)
+ - [coreos.com](https://coreos.com/docs/launching-containers/launching/getting-started-with-systemd/)
