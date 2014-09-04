@@ -3,50 +3,40 @@
 docker-nginx is a CentOS-based docker container for [Nginx](http://nginx.org). It is intended for use with [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
 
 ## Getting the image
-### Option A: Pull from the Docker Hub
-This image is published in the [Docker Hub](https://registry.hub.docker.com/). Simply run the below command to get it on your machine:
+This image is published in the [Docker Hub](https://registry.hub.docker.com/u/dylanlindgren/docker-nginx/). Simply run the below command to get it on your machine:
 
 ```bash
 docker pull dylanlindgren/docker-nginx
 ```
-### Option B: Build from source
-First, `cd` into a directory where you store your Docker repos and clone this repo:
-
-```bash
-git clone https://github.com/dylanlindgren/docker-nginx.git
-```
-
-`cd` into the newly created `docker-nginx` directory and build the image (replacing `[IMAGENAME]` in the below command with anything you want to call the image once it's built eg: *dylan/nginx*):
-
-```bash
-docker build -t [IMAGENAME] .
-```
-
 ## Nginx site config and www data
-Generally we want changes to our website data to be persistent, so that when the container is stopped or destroyed our website data and sites don't go with it. To accomplish this, we are going going to use the `-v` switch for `docker run` to mount volumes on the host inside the container. There will be two volumes, one at `/data/www` and another at `/data/nginx`.
+All site and log data is configured to be located in a Docker volume so that it is persistent and can be shared by other containers (such as php-fpm or a backup container).
 
-The below directory structure must be manually created on the host before running the container.
+There are two volumes defined in this image:
+
+- `/data/nginx/www`
+- `/data/nginx/config`
+- 
+
+Within these folders this image expects the below directory structure:
 ```
 /data
-|
-└────www
-|    ├─── website1_files
-|    |    └  ...
-|    └─── website2_files
-|         └  ...
-|
 └────nginx
-     ├─── logs
-     |    └  ...
-     |
-     └─── sites
-          ├─── available
-          |    |  website1
-          |    |  website2
+     ├─── www
+     |    ├─── website1_files
+     |    |    └  ...
+     |    └─── website2_files
+     |         └  ...
+     └─── config
+          ├─── logs
           |    └  ...
-          └─── enabled
-               |  website1_symlink
-               └  ...
+          └─── sites
+               ├─── available
+               |    |  website1
+               |    |  website2
+               |    └  ...
+               └─── enabled
+                    |  website1_symlink
+                    └  ...
 ```
 [PHP-FPM](https://github.com/dylanlindgren/docker-phpfpm) also requires access to the `/data/www` directory, and so instead of mounting that volume in this container, we will use the `--volumes-from` switch as due to the `--link` command the PHP-FPM container needs to be run first.
 
