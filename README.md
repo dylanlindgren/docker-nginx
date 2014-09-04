@@ -100,20 +100,22 @@ To start the container again:
 docker start couchpotato
 ```
 ### Running as a Systemd service
-To run this container as a service on a [Systemd](http://www.freedesktop.org/wiki/Software/systemd/) based distro (e.g. CentOS 7), create a unit file under `/etc/systemd/system` called `docker-nginx.service` with the below contents
+To run this container as a service on a [Systemd](http://www.freedesktop.org/wiki/Software/systemd/) based distro (e.g. CentOS 7), create a unit file under `/etc/systemd/system` called `nginx.service` with the below contents
 ```bash
 [Unit]
-Description=Nginx docker container
-After=php-fpm.service docker.service
-Requires=php-fpm.service docker.service
+Description=Nginx Docker container (dylanlindgren/docker-nginx)
+After=docker.service
+After=php-fpm.service
+Requires=docker.service
+Requires=php-fpm.service
 
 [Service]
-Type=oneshot
-RemainAfterExit=yes
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker stop web
-ExecStart=/usr/bin/docker start web
-ExecStop=/usr/bin/docker stop web
+ExecStartPre=-/usr/bin/docker stop nginx
+ExecStartPre=-/usr/bin/docker rm nginx
+ExecStartPre=-/usr/bin/docker pull dylanlindgren/docker-nginx
+ExecStart=/usr/bin/docker run --privileged=true -p 80:80 -p 443:443 --name nginx -v /data/nginx:/data/nginx:rw --volumes-from phpfpm --link phpfpm:fpm dylanlindgren/docker-nginx
+ExecStop=/usr/bin/docker stop nginx
 
 [Install]
 WantedBy=multi-user.target
@@ -122,10 +124,11 @@ Then you can start/stop/restart the container with the regular Systemd commands 
 
 To automatically start the container when you restart enable the unit file with the command `systemctl enable nginx.service`.
 
-Something to note is that this service is set to require `docker-phpfpm.service` which is a service which runs the php-fpm container made with  [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
+Something to note is that this service is set to require `php-fpm.service` which is a service which runs the php-fpm container made with  [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
 
 ## Acknowledgements
-The below two blog posts were very useful in the creation of both of these projects.
+The below pages were very useful in the creation of both of these projects.
 
  - [enalean.com](http://www.enalean.com/en/Deploy-%20PHP-app-Docker-Nginx-FPM-CentOSSCL)
  - [stage1.io](http://stage1.io/blog/making-docker-containers-communicate/)
+ - [coreos.com](https://coreos.com/docs/launching-containers/launching/getting-started-with-systemd/)
