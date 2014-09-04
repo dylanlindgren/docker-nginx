@@ -37,28 +37,27 @@ Within these folders this image expects the below directory structure:
                     |  website1_symlink
                     └  ...
 ```
-[PHP-FPM](https://github.com/dylanlindgren/docker-phpfpm) also requires access to the `/data/www` directory, and so instead of mounting that volume in this container, we will use the `--volumes-from` switch as due to the `--link` command the PHP-FPM container needs to be run first.
+[PHP-FPM](https://github.com/dylanlindgren/docker-phpfpm) requires access to the `www` directory in the same location as Nginx has it, so instead of mounting `/data/nginx/www` in this container, we will mount it in the PHP-FPM container and use the `--volumes-from` switch (as due to the `--link` command the PHP-FPM container needs to be run first anyway).
 
-The `available` and `enabled` directories under `/data/nginx/sites` both operate in the same fashion as the regular `sites-available` and `sites-enabled` directories in Nginx - that is, put your website config files all in the `available` directory and create symlinks to these files in the `enabled` directory with the below command (after `cd`ing into the `enabled` directory).
+The `available` and `enabled` directories under `/data/nginx/config/sites` both operate in the same fashion as the regular `sites-available` and `sites-enabled` directories in Nginx - that is, put your website config files all in the `available` directory and create symlinks to these files in the `enabled` directory with the below command (after `cd`ing into the `enabled` directory).
 ```bash
 ln -s ../available/website1 website1
 ```
 
-Each of the files under the `/data/nginx/sites/available` directory should contain a definition for a Nginx server. For example:
+Each of the files under the `/data/nginx/config/sites/available` directory should contain a definition for a Nginx server. For example:
 ```
 server {
     listen       80;
     server_name  www.website1.com;
+    root              /data/www/website1_files/public;
 
     location ~* \.(html|jpg|jpeg|gif|png|css|js|ico|xml)$ {
-        root              /data/www/website1_files/public;
         access_log        off;
         log_not_found     off;
         expires           360d;
     }
 
     location ~* \.php$ {
-        root /data/www;
         include fastcgi.conf;
         fastcgi_pass nginx_backend;
     }
@@ -66,27 +65,27 @@ server {
 ```
 
 ## Creating and running the container
-**NOTE:** a container based on [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm) must be created before running the below steps.
+**NOTE:** a container based on [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm) must be created before running the below steps. In the below commands, this container is referred to as `phpfpm`.
 
 To create and run the container:
 ```bash
-docker run --privileged=true -p 80:80 -p 443:443 --name web -v /data/nginx:/data/nginx:rw --volumes-from php --link php:fpm -d dylanlindgren/docker-nginx
+docker run --privileged=true -p 80:80 -p 443:443 --name nginx -v /data/nginx/config:/data/nginx/config:rw --volumes-from phpfpm --link phpfpm:fpm -d dylanlindgren/docker-nginx
 ```
  - the first `-p` maps the container's port 80 to port 80 on the host, the second maps the container's 443 to the hosts 443.
  - `--name` sets the name of the container (useful when starting/stopping).
- - `-v` maps the `/data/nginx` folder as read/write (rw).
- - `--volumes-from`  gets volumes from the `php` container (it should have `/data/www` mapped)
- - `--link` allows this container and the `php` container to talk to each other over IP.
+ - `-v` maps the `/data/nginx/config` folder as read/write (rw).
+ - `--volumes-from`  gets volumes from the `phpfpm` container (it should have `/data/nginx/www` mapped)
+ - `--link` allows this container and the `phpfpm` container to talk to each other over IP.
  - `-d` runs the container as a daemon
 
 To stop the container:
 ```bash
-docker stop couchpotato
+docker stop nginx
 ```
 
 To start the container again:
 ```bash
-docker start couchpotato
+docker start nginx
 ```
 ### Running as a Systemd service
 To run this container as a service on a [Systemd](http://www.freedesktop.org/wiki/Software/systemd/) based distro (e.g. CentOS 7), create a unit file under `/etc/systemd/system` called `nginx.service` with the below contents
@@ -94,16 +93,16 @@ To run this container as a service on a [Systemd](http://www.freedesktop.org/wik
 [Unit]
 Description=Nginx Docker container (dylanlindgren/docker-nginx)
 After=docker.service
-After=php-fpm.service
+After=phpfpm.service
 Requires=docker.service
-Requires=php-fpm.service
+Requires=phpfpm.service
 
 [Service]
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker stop nginx
 ExecStartPre=-/usr/bin/docker rm nginx
 ExecStartPre=-/usr/bin/docker pull dylanlindgren/docker-nginx
-ExecStart=/usr/bin/docker run --privileged=true -p 80:80 -p 443:443 --name nginx -v /data/nginx:/data/nginx:rw --volumes-from phpfpm --link phpfpm:fpm dylanlindgren/docker-nginx
+ExecStart=/usr/bin/docker run --privileged=true -p 80:80 -p 443:443 --name nginx -v /data/nginx/config:/data/nginx/config:rw --volumes-from phpfpm --link phpfpm:fpm dylanlindgren/docker-nginx
 ExecStop=/usr/bin/docker stop nginx
 
 [Install]
@@ -113,7 +112,7 @@ Then you can start/stop/restart the container with the regular Systemd commands 
 
 To automatically start the container when you restart enable the unit file with the command `systemctl enable nginx.service`.
 
-Something to note is that this service is set to require `php-fpm.service` which is a service which runs the php-fpm container made with  [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
+Something to note is that this service is set to require `phpfpm.service` which is a service which runs the php-fpm container made with  [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
 
 ## Acknowledgements
 The below pages were very useful in the creation of both of these projects.
