@@ -2,6 +2,21 @@
 
 docker-nginx is a CentOS-based docker container for [Nginx](http://nginx.org). It is intended for use with [dylanlindgren/docker-phpfpm](https://github.com/dylanlindgren/docker-phpfpm).
 
+Nginx 1.6.1 is compiled from source with the below modules enabled:
+- http_gzip_static_module
+- http_stub_status_module
+- http_ssl_module
+- http_spdy_module
+- pcre
+- http_image_filter_module
+- file-aio
+- ipv6
+- http_dav_module
+- http_flv_module
+- http_mp4_module
+- http_gunzip_module
+- [spnego-http-auth-nginx-module](https://github.com/stnoonan/spnego-http-auth-nginx-module) - for Kerberos authentication
+
 ## Getting the image
 This image is published in the [Docker Hub](https://registry.hub.docker.com/u/dylanlindgren/docker-nginx/). Simply run the below command to get it on your machine:
 
