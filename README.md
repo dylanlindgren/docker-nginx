@@ -136,3 +136,4 @@ The below pages were very useful in the creation of both of these projects.
  - [stage1.io](http://stage1.io/blog/making-docker-containers-communicate/)
  - [coreos.com](https://coreos.com/docs/launching-containers/launching/getting-started-with-systemd/)
  - [spnego-http-auth-nginx-module](https://github.com/stnoonan/spnego-http-auth-nginx-module)
+ - [Pitfalls - Nginx Community](http://wiki.nginx.org/Pitfalls)
