@@ -6,33 +6,30 @@ MAINTAINER "Dylan Lindgren" <dylan.lindgren@gmail.com>
 ADD build/certs /tmp/certs
 RUN cat /tmp/certs >> /etc/pki/tls/certs/ca-bundle.crt
 
-# Install required repos and update
-ADD build/nginx.repo /etc/yum.repos.d/nginx.repo
-RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-1.noarch.rpm
-RUN rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-RUN yum update -y
+# Build Nginx from source with appropriate modules
+ADD build/nginx-build.sh /tmp/nginx-build.sh
+RUN chmod ugo+x /tmp/nginx-build.sh
+WORKDIR /tmp
+RUN /tmp/nginx-build.sh
+RUN rm -R -f /tmp/*
 
-# Install Nginx
-RUN yum install -y nginx
+# Apply Nginx configuration
+ADD config/nginx.conf /etc/nginx/nginx.conf
 
-# Apply configuration
-ADD build/nginx.conf /etc/nginx/nginx.conf
+# This script gets the linked PHP-FPM container's IP and puts it into
+# the upstream definition in the /etc/nginx/nginx.conf file, after which
+# it launches Nginx.
+ADD config/nginx.sh /opt/bin/nginx.sh
+RUN chmod u=rwx /opt/bin/nginx.sh
+RUN chown nginx:nginx /opt/bin/nginx.sh /etc/nginx /etc/nginx/nginx.conf /var/log/nginx /usr/share/nginx
 
 # DATA VOLUMES
-RUN mkdir /data
-RUN mkdir /data/www
-RUN mkdir /data/nginx
-RUN mkdir /data/nginx/sites
-RUN mkdir /data/nginx/logs
-
+RUN mkdir -p /data/nginx/www/
+RUN mkdir -p /data/nginx/config/
 # Contains the website's www data
-VOLUME ["/data/www"]
-
-# Contains the Nginx server's website definitions
-VOLUME ["/data/nginx/sites"]
-
-# Contains the log files for Nginx
-VOLUME ["/data/nginx/logs"]
+VOLUME ["/data/nginx/www"]
+# Contains the Nginx server's site definitions and logs
+VOLUME ["/data/nginx/config"]
 
 # PORTS
 # Port 80 for http
@@ -40,17 +37,6 @@ EXPOSE 80
 # Port 443 for https
 EXPOSE 443
 
-# Allow Nginx to bind to a port below 1024
-RUN setcap cap_net_bind_service=ep /usr/sbin/nginx
-
-# This script gets the linked PHP-FPM container's IP and puts it into
-# the upstream definition in the /etc/nginx/nginx.conf file, after which
-# it launches Nginx.
-ADD build/nginx.sh /opt/bin/nginx.sh
-RUN chmod u=rwx /opt/bin/nginx.sh
-RUN chown nginx:nginx /opt/bin/nginx.sh /etc/nginx /etc/nginx/nginx.conf
-
-# Run all subsequent commands as the Nginx user
 USER nginx
 
 # Run the Nginx startup script on container start.
