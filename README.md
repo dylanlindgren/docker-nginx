@@ -5,7 +5,7 @@ docker-nginx is a CentOS-based docker container for [Nginx](http://nginx.org). I
 Nginx 1.6.1 is compiled from source with the below modules enabled:
 - http_gzip_static_module
 - http_stub_status_module
-- http_ssl_module
+- http_ssl_module - for HTTPS support
 - http_spdy_module
 - pcre
 - http_image_filter_module
@@ -24,7 +24,7 @@ This image is published in the [Docker Hub](https://registry.hub.docker.com/u/dy
 docker pull dylanlindgren/docker-nginx
 ```
 ## Nginx site config and www data
-All site and log data is configured to be located in a Docker volume so that it is persistent and can be shared by other containers (such as php-fpm or a backup container).
+All site and log data is configured to be located in a Docker volume so that it is persistent and can be shared by other containers (such as [PHP-FPM](https://github.com/dylanlindgren/docker-phpfpm), or a backup container).
 
 There are two volumes defined in this image:
 
@@ -135,3 +135,4 @@ The below pages were very useful in the creation of both of these projects.
  - [enalean.com](http://www.enalean.com/en/Deploy-%20PHP-app-Docker-Nginx-FPM-CentOSSCL)
  - [stage1.io](http://stage1.io/blog/making-docker-containers-communicate/)
  - [coreos.com](https://coreos.com/docs/launching-containers/launching/getting-started-with-systemd/)
+ - [spnego-http-auth-nginx-module](https://github.com/stnoonan/spnego-http-auth-nginx-module)
