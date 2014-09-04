@@ -15,7 +15,6 @@ There are two volumes defined in this image:
 
 - `/data/nginx/www`
 - `/data/nginx/config`
-- 
 
 Within these folders this image expects the below directory structure:
 ```
