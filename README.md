@@ -23,6 +23,7 @@ This image is published in the [Docker Hub](https://registry.hub.docker.com/u/dy
 ```bash
 docker pull dylanlindgren/docker-nginx
 ```
+Alternatively you can clone this repository and build the image using the `docker build` command.
 ## Nginx site config and www data
 All site and log data is configured to be located in a Docker volume so that it is persistent and can be shared by other containers (such as [PHP-FPM](https://github.com/dylanlindgren/docker-phpfpm), or a backup container).
 
