@@ -75,7 +75,7 @@ server {
 
     location ~* \.php$ {
         include fastcgi.conf;
-        fastcgi_pass nginx_backend;
+        fastcgi_pass phpfpm_backend;
     }
 }
 ```
